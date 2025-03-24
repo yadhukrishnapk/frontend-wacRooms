@@ -4,10 +4,12 @@ import { FiAlertCircle } from "react-icons/fi";
 import { useAuth } from "../../hooks/useAuth";
 import EmailAuth from "./EmailAuth";
 import GoogleAuth from "./GoogleAuth";
+import CredentialsTourPopup from "../../componets/credentialsPopup/CredentialsTourPopUp";
 
 const Signin = () => {
   const { user, login } = useAuth();
   const [error, setError] = useState("");
+  const [showCredentialTip, setShowCredentialTip] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,12 +29,15 @@ const Signin = () => {
     if (error) setError("");
   };
 
+  const handleUseCredentials = (credentials) => {
+    console.log("Using credentials:", credentials);
+  };
+
   if (user) return null; 
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 relative">
       <div className="max-w-md w-full space-y-8">
-        {/* Logo/Header */}
         <div className="text-center">
           <h1 className="font-bold text-2xl flex flex-wrap justify-center tracking-tight">
             <span className="text-black font-black">WAC</span>
@@ -43,7 +48,7 @@ const Signin = () => {
           </h2>
           <p className="mt-2 text-sm text-gray-500">Use webandcrafts account</p>
         </div>
-        {/* Error Message */}
+        
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-2">
             <div className="flex items-center">
@@ -53,7 +58,6 @@ const Signin = () => {
           </div>
         )}
 
-        {/* Email Authentication */}
         <div onClick={clearError}>
           <EmailAuth
             onLoginSuccess={handleLoginSuccess}
@@ -61,7 +65,6 @@ const Signin = () => {
           />
         </div>
 
-        {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
@@ -73,7 +76,6 @@ const Signin = () => {
           </div>
         </div>
 
-        {/* Google Authentication */}
         <div onClick={clearError}>
           <GoogleAuth
             onLoginSuccess={handleLoginSuccess}
@@ -81,7 +83,6 @@ const Signin = () => {
           />
         </div>
 
-        {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-xs text-gray-500">
             By signing in, you agree to our{" "}
@@ -95,6 +96,13 @@ const Signin = () => {
           </p>
         </div>
       </div>
+
+      {showCredentialTip && (
+        <CredentialsTourPopup 
+          onClose={() => setShowCredentialTip(false)}
+          onUseCredentials={handleUseCredentials}
+        />
+      )}
     </div>
   );
 };
