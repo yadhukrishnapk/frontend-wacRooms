@@ -48,6 +48,15 @@ const EventModal = ({
     setLoading(true);
     setError(null);
 
+    const startDate = new Date(formData.start);
+    const endDate = new Date(formData.end);
+
+    if (endDate <= startDate) {
+      setError("End date must be after start date");
+      setLoading(false);
+      return;
+    }
+
     const eventData = {
       title: formData.title,
       start: new Date(formData.start),
