@@ -59,8 +59,8 @@ const EventModal = ({
 
     const eventData = {
       title: formData.title,
-      start: new Date(formData.start),
-      end: new Date(formData.end),
+      start: startDate,
+      end: endDate,
       category: formData.category,
       room,
       userId,
