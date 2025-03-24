@@ -8,7 +8,8 @@ const useWebSocket = () => {
 
   useEffect(() => {
     if (!user) return;
-
+    console.log("WebSocket URL:", websocketUrl);
+    
     const ws = new WebSocket(`${websocketUrl}?username=${encodeURIComponent(user.email)}`);
 
     ws.onopen = () => {
@@ -45,7 +46,7 @@ const useWebSocket = () => {
     return () => {
       ws.close();
     };
-  }, [user]);
+  }, [user, websocketUrl]);
 
   return notifications;
 };
