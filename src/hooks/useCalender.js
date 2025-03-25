@@ -27,7 +27,7 @@ const formatEvents = (events) => {
 const useCalendar = (initialEvents = [], room, setParentLoading = null, showAlert = null) => {
   console.log("on useCalender");
   
-  const [view, setView] = useState("month");
+  const [view, setView] = useState("day");
   const [date, setDate] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
