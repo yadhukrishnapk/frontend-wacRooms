@@ -1,8 +1,13 @@
-// src/pages/MainPage.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Office from '../../bits/Office';
+import { get } from '../apiServices/apiServices';
+import OngoingMeetingsSidebar from '../componets/OnGoingMeetSidebar/OngoingMeetingSidebar';
 
 const MainPage = () => {
+  const [activeEvents, setActiveEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+
   const rooms = [
     {
       label: "Abin's Room",
@@ -13,27 +18,57 @@ const MainPage = () => {
       path: "/room/room2",
     },
     {
-      label: "TV Room",
+      label: "TV Room", 
       path: "/room/room3",
     }
   ];
 
+  const toggleSidebarVisibility = () => {
+    if (!isSidebarVisible && activeEvents.length === 0) {
+      fetchActiveEvents();
+    }
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
+  const fetchActiveEvents = async () => {
+    setIsLoading(true);
+    try {
+      const response = await get('/event/check-active');
+      if (response.activeEvents) {
+        setActiveEvents(response.activeEvents);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Failed to fetch active events:', error);
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen w-full bg-gray-100 flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-2xl">
+    <div className="relative min-h-screen w-full bg-white flex items-center justify-center p-6">
+      <OngoingMeetingsSidebar
+        activeEvents={activeEvents} 
+        isVisible={isSidebarVisible}
+        toggleVisibility={toggleSidebarVisibility}
+        isLoading={isLoading}
+      />
+
+      <div className="w-full max-w-2xl relative z-10">
         <div className="mb-12 text-center">
-          <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
             Office Space
           </h1>
-          <div className="mt-2 text-sm text-gray-500 flex items-center justify-center">
-            <span className="inline-block w-6 h-px bg-gray-400 mr-2"></span>
+          <div className="mt-2 text-sm text-gray-600 flex items-center justify-center">
+            <span className="inline-block w-6 h-px bg-gray-300 mr-2"></span>
             Explore your workspace
-            <span className="inline-block w-6 h-px bg-gray-400 ml-2"></span>
+            <span className="inline-block w-6 h-px bg-gray-300 ml-2"></span>
           </div>
         </div>
 
         <div className="flex justify-center">
-          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-12 hover:shadow-lg transition-shadow duration-300">
+          <div className="bg-gray-50 rounded-2xl border border-gray-200 p-12 
+            hover:shadow-xl transition-all duration-300 ease-in-out 
+            transform hover:-translate-y-1">
             <Office 
               size={1.5} 
               rooms={rooms}
