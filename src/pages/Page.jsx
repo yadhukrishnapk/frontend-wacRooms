@@ -29,7 +29,6 @@ const MainPage = () => {
     }
     setIsSidebarVisible(!isSidebarVisible);
   };
-
   const fetchActiveEvents = async () => {
     setIsLoading(true);
     try {
@@ -37,17 +36,15 @@ const MainPage = () => {
       if (response.success) {
         console.log("✅ API Response Time (IST):", response.currentTime);
         
-        if (response.activeEvents) {
-          setActiveEvents(response.activeEvents);
-        }
+        // Use optional chaining and nullish coalescing
+        setActiveEvents(response.activeEvents ?? []);
       }
-      setIsLoading(false);
     } catch (error) {
       console.error('Failed to fetch active events:', error);
+    } finally {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <div className="relative min-h-screen w-full bg-white flex items-center justify-center p-6">
