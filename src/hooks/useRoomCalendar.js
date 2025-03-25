@@ -5,30 +5,44 @@ import { get } from "../apiServices/apiServices";
 import { formatEvents } from "../utils/calendarUtils";
 
 const fetcher = async (url) => {
-  const data = await get(url);
-  return data;
+  try {
+    const data = await get(url);
+    return data;
+  } catch (error) {
+    console.error("Fetching events error:", error);
+    throw error;
+  }
 };
 
-/**
- * Custom hook for managing room calendar functionality with SWR
- * @param {string} roomId - The room identifier (e.g., "room1", "room2")
- * @returns {Object} Calendar state and handlers
- */
 const useRoomCalendar = (roomId) => {
+  console.log("on useRoomCalendar");
+  
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [view, setView] = useState("month");
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const navigate = useNavigate();
 
-  const { data, error, mutate } = useSWR(`/event/room/${roomId}`, fetcher, {
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-    dedupingInterval: 10000, 
+  const { 
+    data, 
+    error, 
+    mutate,
+    isValidating 
+  } = useSWR(`/event/room/${roomId}`, fetcher, {
+    revalidateOnFocus: true,     // Revalidate when window is refocused
+    revalidateOnReconnect: true, // Revalidate when internet connection is restored
+    refreshInterval: 0,           // Disable automatic refetching
+    dedupingInterval: 0,          // Disable deduping to ensure fresh data
+    shouldRetryOnError: true,     // Retry on error
+    onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+      if (retryCount >= 3) return;
+      
+      setTimeout(() => revalidate(config), 5000);
+    }
   });
 
-  const events = data ? formatEvents(data.events) : [];
-  const loading = !data && !error;
+  const events = data && data.events ? formatEvents(data.events) : [];
+  const loading = isValidating;
 
   const handleSelectSlot = ({ start, end }) => {
     setSelectedSlot({ start, end });
@@ -60,7 +74,7 @@ const useRoomCalendar = (roomId) => {
   };
 
   const refreshEvents = () => {
-    mutate();
+    mutate(undefined, { revalidate: true });
   };
 
   return {
