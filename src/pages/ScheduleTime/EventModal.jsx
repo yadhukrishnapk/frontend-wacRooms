@@ -19,12 +19,14 @@ const EventModal = ({
     category: "default",
     eventType: "internal",
     customEventType: "",
+    participants: [],
     start: moment(initialStart).format("YYYY-MM-DDTHH:mm"),
     end: moment(initialEnd).format("YYYY-MM-DDTHH:mm"),
   });
+  const [participantInput, setParticipantInput] = useState(""); // Separate state for typing
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [titleError, setTitleError] = useState(""); 
+  const [titleError, setTitleError] = useState("");
 
   useEffect(() => {
     if (editingEvent) {
@@ -34,20 +36,22 @@ const EventModal = ({
         category: editingEvent.category || "default",
         eventType: isCustomEventType ? "other" : editingEvent.eventType || "internal",
         customEventType: isCustomEventType ? editingEvent.eventType : "",
+        participants: editingEvent.participants || [],
         start: moment(editingEvent.start).format("YYYY-MM-DDTHH:mm"),
         end: moment(editingEvent.end).format("YYYY-MM-DDTHH:mm"),
       });
-      setTitleError(""); 
+      setTitleError("");
     } else {
       setFormData({
         title: "",
         category: "default",
         eventType: "internal",
         customEventType: "",
+        participants: [],
         start: moment(initialStart).format("YYYY-MM-DDTHH:mm"),
         end: moment(initialEnd).format("YYYY-MM-DDTHH:mm"),
       });
-      setTitleError(""); // No initial error for new event
+      setTitleError("");
     }
   }, [editingEvent, initialStart, initialEnd]);
 
@@ -86,11 +90,12 @@ const EventModal = ({
       category: formData.category,
       eventType:
         formData.eventType === "other" ? formData.customEventType : formData.eventType,
+      participants: formData.participants,
       room,
       userId,
     };
 
-    console.log("Sending eventData:", eventData); 
+    console.log("Sending eventData:", eventData);
 
     const isConflict = events.some((event) => {
       if (editingEvent && event._id === editingEvent._id) return false;
@@ -131,20 +136,41 @@ const EventModal = ({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-
     if (name === "title") {
-      if (value.length < 3) {
-        setTitleError("Title must be at least 3 characters long");
-      } else {
-        setTitleError("");
+      setFormData({ ...formData, [name]: value });
+      setTitleError(value.length < 3 ? "Title must be at least 3 characters long" : "");
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleParticipantInput = (e) => {
+    setParticipantInput(e.target.value);
+  };
+
+  const handleParticipantKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const newParticipant = participantInput.trim();
+      if (newParticipant && !formData.participants.includes(newParticipant)) {
+        setFormData({
+          ...formData,
+          participants: [...formData.participants, newParticipant],
+        });
+        setParticipantInput(""); // Clear the input
       }
     }
+  };
+
+  const removeParticipant = (index) => {
+    const updatedParticipants = formData.participants.filter((_, i) => i !== index);
+    setFormData({ ...formData, participants: updatedParticipants });
   };
 
   const handleClose = () => {
     setError(null);
     setTitleError("");
+    setParticipantInput(""); // Clear input on close
     onClose();
   };
 
@@ -255,6 +281,40 @@ const EventModal = ({
               />
             </div>
           )}
+
+          <div className="mb-6">
+            <label className="block text-xs uppercase tracking-wider text-gray-900 mb-2">
+              Participants (type and press Enter or comma)
+            </label>
+            <input
+              type="text"
+              value={participantInput}
+              onChange={handleParticipantInput}
+              onKeyDown={handleParticipantKeyDown}
+              className="w-full py-2 px-3 border border-black focus:outline-none focus:ring-0 bg-white"
+              disabled={loading}
+              placeholder="Type name and press Enter or comma to add"
+            />
+            {formData.participants.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {formData.participants.map((participant, index) => (
+                  <span
+                    key={index}
+                    className="bg-gray-200 px-2 py-1 rounded-full text-xs flex items-center"
+                  >
+                    {participant}
+                    <button
+                      type="button"
+                      onClick={() => removeParticipant(index)}
+                      className="ml-2 text-red-500 hover:text-red-700"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="mb-6">
             <label className="block text-xs uppercase tracking-wider text-gray-900 mb-2">

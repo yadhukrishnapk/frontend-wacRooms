@@ -120,6 +120,9 @@ export const EventDetailsModal = ({ event, onClose }) => {
             <span className="font-semibold">Room: </span>
             <span className="text-blue-800 text-md px-1">{event.room}</span>
           </p>
+          <p>
+          <p><strong>Participants:</strong> {event.participants?.length > 0 ? event.participants.join(", ") : 'N/A'}</p>
+          </p>
           {event.createdAt && (
             <p className="text-xs text-gray-500 mt-4">
               Created: {format(new Date(event.createdAt), "PPpp")}

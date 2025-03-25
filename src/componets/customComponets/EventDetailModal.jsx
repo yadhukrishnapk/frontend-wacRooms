@@ -51,6 +51,7 @@ const EventDetailModal = ({
             <p><strong>Title:</strong> {event.title}</p>
             <p><strong>Category:</strong> {event.category || 'N/A'}</p>
             <p><strong>Type:</strong> {event.eventType}</p>
+            <p><strong>Participants:</strong> {event.participants?.length > 0 ? event.participants.join(", ") : 'N/A'}</p>
             <p><strong>Start:</strong> {moment(event.start).format('LLL')}</p>
             <p><strong>End:</strong> {moment(event.end).format('LLL')}</p>
             <p><strong>Created By:</strong> {event.userId?.name || 'Unknown'}</p>
