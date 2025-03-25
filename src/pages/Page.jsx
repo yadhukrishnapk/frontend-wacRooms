@@ -34,8 +34,12 @@ const MainPage = () => {
     setIsLoading(true);
     try {
       const response = await get('/event/check-active');
-      if (response.activeEvents) {
-        setActiveEvents(response.activeEvents);
+      if (response.success) {
+        console.log("✅ API Response Time (IST):", response.currentTime);
+        
+        if (response.activeEvents) {
+          setActiveEvents(response.activeEvents);
+        }
       }
       setIsLoading(false);
     } catch (error) {
@@ -43,6 +47,7 @@ const MainPage = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="relative min-h-screen w-full bg-white flex items-center justify-center p-6">
