@@ -50,6 +50,7 @@ const EventDetailModal = ({
           <div className="text-sm space-y-2">
             <p><strong>Title:</strong> {event.title}</p>
             <p><strong>Category:</strong> {event.category || 'N/A'}</p>
+            <p><strong>Type:</strong> {event.eventType}</p>
             <p><strong>Start:</strong> {moment(event.start).format('LLL')}</p>
             <p><strong>End:</strong> {moment(event.end).format('LLL')}</p>
             <p><strong>Created By:</strong> {event.userId?.name || 'Unknown'}</p>

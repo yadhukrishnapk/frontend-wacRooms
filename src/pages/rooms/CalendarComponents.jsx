@@ -113,8 +113,12 @@ export const EventDetailsModal = ({ event, onClose }) => {
             </span>
           </p>
           <p>
+            <span className="font-semibold">Type: </span>
+            <span className="px-2 py-1 rounded-2xl bg-amber-50" >{event.eventType}</span>
+          </p>
+          <p>
             <span className="font-semibold">Room: </span>
-            {event.room}
+            <span className="text-blue-800 text-md px-1">{event.room}</span>
           </p>
           {event.createdAt && (
             <p className="text-xs text-gray-500 mt-4">
