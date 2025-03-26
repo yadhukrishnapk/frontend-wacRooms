@@ -25,7 +25,7 @@ const useBrowserNotifications = (notifications) => {
       if (Notification.permission === 'granted') {
         new Notification('Event Notification', {
           body: notification.message,
-          icon: '/path/to/your/logo.png', // Optional: Add your app's logo
+          icon: '/download.png', // Optional: Add your app's logo
           tag: notification.id.toString() // Helps prevent duplicate notifications
         });
       }
