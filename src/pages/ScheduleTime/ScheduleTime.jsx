@@ -37,6 +37,7 @@ const ScheduleTime = () => {
       title,
       message,
     });
+    setTimeout(closeAlert, 3000); // Auto-close after 3 seconds
   };
 
   const closeAlert = () => {
@@ -70,6 +71,11 @@ const ScheduleTime = () => {
     return injectCalendarStyles();
   }, []);
 
+  const handleSave = ({ event, message }) => {
+    handleSaveEvent(event);
+    showAlert("Success", message); // Show success message from EventModal
+  };
+
   const handleEditEvent = (event) => {
     setDetailModalOpen(false);
     setEditingEvent(event);
@@ -93,8 +99,7 @@ const ScheduleTime = () => {
   const currentTime = moment().startOf("hour").toDate();
   const startOfDay = moment().startOf("day").toDate();
   const isToday = moment(date).isSame(new Date(), "day");
-  const minTime =
-    isToday && (view === "day" || view === "week") ? currentTime : startOfDay;
+  const minTime = isToday && (view === "day" || view === "week") ? currentTime : startOfDay;
 
   if (loading) {
     return <LoadingCalendar />;
@@ -117,20 +122,7 @@ const ScheduleTime = () => {
         onView={handleViewChange}
         date={date}
         onNavigate={handleNavigate}
-        components={{
-          toolbar: (toolbarProps) => (
-            <CustomToolbar
-              {...toolbarProps}
-              date={date}
-              view={view}
-              goToPrevious={goToPrevious}
-              goToNext={goToNext}
-              goToToday={goToToday}
-              handleViewChange={handleViewChange}
-              openModal={openModal}
-            />
-          ),
-        }}
+        components={{ toolbar: CustomToolbar }}
         eventPropGetter={eventStyleGetter}
         dayPropGetter={dayPropGetter}
         className="min-h-screen"
@@ -142,7 +134,7 @@ const ScheduleTime = () => {
           closeModal();
           setEditingEvent(null);
         }}
-        onSave={handleSaveEvent}
+        onSave={handleSave} // Updated to handle event and message
         initialStart={editingEvent?.start || selectedSlot?.start || new Date()}
         initialEnd={editingEvent?.end || selectedSlot?.end || new Date()}
         room={room}
@@ -150,7 +142,6 @@ const ScheduleTime = () => {
         editingEvent={editingEvent}
         events={events}
       />
-
       <EventDetailModal
         isOpen={detailModalOpen}
         onClose={() => setDetailModalOpen(false)}

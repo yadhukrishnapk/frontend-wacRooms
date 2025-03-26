@@ -23,7 +23,7 @@ const EventModal = ({
     start: moment(initialStart).format("YYYY-MM-DDTHH:mm"),
     end: moment(initialEnd).format("YYYY-MM-DDTHH:mm"),
   });
-  const [participantInput, setParticipantInput] = useState(""); // Separate state for typing
+  const [participantInput, setParticipantInput] = useState(""); 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [titleError, setTitleError] = useState("");
@@ -119,11 +119,16 @@ const EventModal = ({
     try {
       if (editingEvent) {
         await post(`/event/update/${editingEvent._id}`, eventData);
-        onSave({ ...editingEvent, ...eventData });
+        onSave({
+          event: { ...editingEvent, ...eventData },
+          message: "Event updated successfully",
+        });
       } else {
         const response = await post("/event/create", eventData);
-        console.log("Created event:", response.event);
-        onSave({ ...eventData, id: response.event._id });
+        onSave({
+          event: { ...eventData, _id: response.event._id },
+          message: "Event created successfully",
+        });
       }
       onClose();
     } catch (err) {
