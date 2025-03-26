@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
+import useBrowserNotifications from "./useBrowserNotifications";
 
 const useWebSocket = () => {
   const [notifications, setNotifications] = useState([]);
   const { user } = useAuth();
   const websocketUrl = import.meta.env.VITE_WEBSOCKET_URL;
+  useBrowserNotifications(notifications);
 
   useEffect(() => {
     if (!user) return;

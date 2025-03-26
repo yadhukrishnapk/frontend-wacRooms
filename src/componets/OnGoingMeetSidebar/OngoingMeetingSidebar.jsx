@@ -2,28 +2,28 @@ import React from 'react';
 import { Clock, MapPin, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 
 const OngoingMeetingsSidebar = ({ 
-    activeEvents, 
-    isVisible, 
-    toggleVisibility, 
-    isLoading 
-  }) => {
-    const formatTime = (dateString) => {
-      const date = new Date(dateString);
-      return date.toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: false // 24-hour format
-      });
-    };
-  
-    const getRoomDisplayName = (room) => {
-      const roomMap = {
-        'room1': "Abin's Room",
-        'room2': "Jilu's Room",
-        'room3': "TV Room"
-      };
-      return roomMap[room.toLowerCase()] || room;
-    };
+  activeEvents, 
+  isVisible, 
+  toggleVisibility, 
+  isLoading 
+}) => {
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const getRoomDisplayName = (room) => {
+    switch (room.toLowerCase()) {
+      case 'room1':
+        return "Abin's Room";
+      case 'room2':
+        return "Jilu's Room";
+      case 'room3':
+        return "TV Room";  
+      default:
+        return room; 
+    }
+  };
 
   return (
     <div className={`fixed top-1/2 right-0 transform -translate-y-1/2 z-20 
