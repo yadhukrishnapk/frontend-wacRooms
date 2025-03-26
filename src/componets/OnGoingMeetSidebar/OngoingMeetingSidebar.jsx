@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Clock, MapPin, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 
 const OngoingMeetingsSidebar = ({ 
@@ -7,6 +7,25 @@ const OngoingMeetingsSidebar = ({
   toggleVisibility, 
   isLoading 
 }) => {
+  const [pulseColor, setPulseColor] = useState('bg-black');
+
+  const getRandomColor = () => {
+    const colors = [
+      'bg-red-800', 'bg-blue-800', 'bg-green-900', 
+      'bg-fuchsia-800', 'bg-purple-900', 'bg-emerald-900', 
+      'bg-indigo-800', 'bg-black', 'bg-slate-800','bg-black'
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setPulseColor(getRandomColor());
+    }, 500);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   const formatTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -30,11 +49,12 @@ const OngoingMeetingsSidebar = ({
       w-72 bg-black text-white rounded-l-2xl shadow-2xl 
       transition-all duration-300 ease-in-out 
       ${isVisible ? 'translate-x-0' : 'translate-x-full'}`}>
-      {/* Pull Tab */}
+      {/* Pull Tab with Unconditional Blinking Effect */}
       <button 
         onClick={toggleVisibility}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full 
-        bg-black text-white p-2 rounded-l-lg focus:outline-none"
+        className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full 
+        animate-pulse ${pulseColor}
+        text-white p-2 rounded-l-lg focus:outline-none transition-colors duration-300`}
       >
         {isVisible ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
       </button>
